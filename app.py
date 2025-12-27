@@ -237,7 +237,7 @@ st.markdown("""
     [data-testid="stSidebar"] [data-testid="stExpander"] summary span,
     [data-testid="stSidebar"] [data-testid="stExpander"] summary div {
         color: #00BFFF !important; /* Deep Sky Blue */
-        font-size: 22px !important;
+        font-size: 18px !important;
         font-weight: 700 !important;
     }
 
