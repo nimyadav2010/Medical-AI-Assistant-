@@ -1,8 +1,18 @@
 import streamlit as st
 import os
+import sys
+
+# Fix for ChromaDB on Streamlit Cloud (requires sqlite3 >= 3.35.0)
+try:
+    __import__('pysqlite3')
+    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+except ImportError:
+    pass
+
 import httpx
 import pandas as pd
 import json
+import glob
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_openai import ChatOpenAI
@@ -22,6 +32,15 @@ st.title("🏥 Agentic Healthcare Assistant")
 ehr = EHRAdapter()
 appt_tool = AppointmentAdapter()
 rag = RAGTool(db_path="./chroma_db")
+
+# Auto-Ingest Data on Startup if DB is empty (for Cloud Deployment)
+if not os.path.exists("./chroma_db/chroma.sqlite3"):
+    with st.spinner("Initializing Knowledge Base... This may take a minute."):
+        pdf_files = glob.glob(os.path.join("data", "*.pdf"))
+        if pdf_files:
+            for pdf_path in pdf_files:
+                rag.ingest_pdf(pdf_path)
+            st.success(f"Ingested {len(pdf_files)} documents into Knowledge Base.")
 
 # Initialize Helper LLM for Formatting (Bypass SSL)
 formatter_llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0, http_client=httpx.Client(verify=False))
