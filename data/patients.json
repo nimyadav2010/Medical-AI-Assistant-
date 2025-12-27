@@ -1,0 +1,20 @@
+[
+  {
+    "id": "p1",
+    "name": "John Doe",
+    "age": 70,
+    "condition": "Chronic Kidney Disease",
+    "history": "Diagnosed 5 years ago. Hypertension. Diabetes Type 2. Patient reports fatigue and swelling in legs.",
+    "medications": ["Lisinopril", "Metformin"],
+    "last_visit": "2024-11-15"
+  },
+  {
+    "id": "p2",
+    "name": "Jane Smith",
+    "age": 45,
+    "condition": "Asthma",
+    "history": "Mild persistent asthma. Occasional flare-ups during pollen season.",
+    "medications": ["Albuterol"],
+    "last_visit": "2024-12-01"
+  }
+]
