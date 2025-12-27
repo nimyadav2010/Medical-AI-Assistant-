@@ -31,8 +31,13 @@ class RAGTool:
                 self.embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2", model_kwargs={'device': 'cpu'})
         except Exception as e:
             print(f"Failed to initialize HuggingFaceEmbeddings: {e}")
-            # Fallback to OpenAI if HF fails, but likely OpenAI also fails based on previous attempts
-            self.http_client = httpx.Client(verify=False)
+            # Fallback to OpenAI if HF fails
+            # On Windows (Local), we disable SSL verify. On Linux (Cloud), we use default.
+            if os.name == 'nt':
+                self.http_client = httpx.Client(verify=False)
+            else:
+                self.http_client = None
+            
             self.embeddings = OpenAIEmbeddings(model="text-embedding-ada-002", http_client=self.http_client)
 
         self.vectorstore = Chroma(persist_directory=self.db_path, embedding_function=self.embeddings, collection_name=self.collection_name)

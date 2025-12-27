@@ -383,10 +383,13 @@ elif page == "📋 Patient Dashboard":
                                 st.write(filtered_history)
                         else:
                              st.warning(f"No history found for {selected_patient} (Name mismatch in documents).")
-                             st.write(raw_history)
+                             with st.expander("Debug: Raw Results (Filtered Out)"):
+                                 st.write(raw_history)
                     else:
                         st.warning("No history found or error occurred.")
-                        st.write(raw_history)
+                        with st.expander("Debug: Empty Result"):
+                            st.write(f"Query: Medical history and conditions of {selected_patient}")
+                            st.write(f"Result: {raw_history}")
 
 # --- Page 3: Appointments ---
 elif page == "📅 Appointments":
