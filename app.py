@@ -24,6 +24,7 @@ from tools.rag_tool import RAGTool
 # Load environment variables
 load_dotenv()
 
+# Set page configuration
 st.set_page_config(page_title="Agentic Healthcare Assistant", layout="wide")
 
 st.title("🏥 Agentic Healthcare Assistant")
