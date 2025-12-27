@@ -34,6 +34,24 @@ ehr = EHRAdapter()
 appt_tool = AppointmentAdapter()
 rag = RAGTool(db_path="./chroma_db")
 
+# --- Auto-Ingest Logic (Safe Version) ---
+if "rag_initialized" not in st.session_state:
+    try:
+        doc_count = rag.get_doc_count()
+        if doc_count == 0:
+            with st.spinner("Initializing Knowledge Base... (One-time setup)"):
+                pdf_files = glob.glob(os.path.join("data", "*.pdf"))
+                if pdf_files:
+                    for pdf_path in pdf_files:
+                        rag.ingest_pdf(pdf_path)
+                    st.success(f"Knowledge Base initialized with {len(pdf_files)} documents.")
+                else:
+                    st.warning("No PDF files found in data/ folder.")
+        st.session_state["rag_initialized"] = True
+    except Exception as e:
+        st.error(f"Error initializing RAG: {e}")
+        st.session_state["rag_initialized"] = True
+
 # Initialize Helper LLM for Formatting
 # On Windows (Local), we disable SSL verify. On Linux (Cloud), we use default.
 if os.name == 'nt':
