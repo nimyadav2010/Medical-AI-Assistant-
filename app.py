@@ -33,14 +33,32 @@ ehr = EHRAdapter()
 appt_tool = AppointmentAdapter()
 rag = RAGTool(db_path="./chroma_db")
 
+# --- Sidebar: System Status ---
+with st.sidebar.expander("🔧 System Status", expanded=True):
+    doc_count = rag.get_doc_count()
+    st.metric("Knowledge Base Docs", doc_count)
+    
+    if st.button("Re-build Knowledge Base"):
+        with st.spinner("Clearing and Re-ingesting..."):
+            rag.clear_db()
+            pdf_files = glob.glob(os.path.join("data", "*.pdf"))
+            if pdf_files:
+                for pdf_path in pdf_files:
+                    rag.ingest_pdf(pdf_path)
+                st.success(f"Re-ingested {len(pdf_files)} files.")
+                st.rerun()
+            else:
+                st.error("No PDF files found in data/ folder.")
+
 # Auto-Ingest Data on Startup if DB is empty (for Cloud Deployment)
-if not os.path.exists("./chroma_db/chroma.sqlite3"):
+if doc_count == 0:
     with st.spinner("Initializing Knowledge Base... This may take a minute."):
         pdf_files = glob.glob(os.path.join("data", "*.pdf"))
         if pdf_files:
             for pdf_path in pdf_files:
                 rag.ingest_pdf(pdf_path)
             st.success(f"Ingested {len(pdf_files)} documents into Knowledge Base.")
+            st.rerun()
 
 # Initialize Helper LLM for Formatting
 # On Windows (Local), we disable SSL verify. On Linux (Cloud), we use default.

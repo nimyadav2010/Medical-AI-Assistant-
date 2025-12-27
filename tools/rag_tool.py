@@ -42,6 +42,22 @@ class RAGTool:
 
         self.vectorstore = Chroma(persist_directory=self.db_path, embedding_function=self.embeddings, collection_name=self.collection_name)
 
+    def get_doc_count(self):
+        try:
+            return self.vectorstore._collection.count()
+        except:
+            return 0
+
+    def clear_db(self):
+        try:
+            self.vectorstore.delete_collection()
+            # Re-initialize
+            self.vectorstore = Chroma(persist_directory=self.db_path, embedding_function=self.embeddings, collection_name=self.collection_name)
+            return True
+        except Exception as e:
+            print(f"Error clearing DB: {e}")
+            return False
+
     def ingest_pdf(self, pdf_path):
         if not os.path.exists(pdf_path):
             print(f"File not found: {pdf_path}")
