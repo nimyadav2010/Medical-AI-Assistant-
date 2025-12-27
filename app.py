@@ -352,30 +352,38 @@ elif page == "📋 Patient Dashboard":
             if st.button("Fetch Medical History"):
                 with st.spinner("Retrieving and structuring history..."):
                     # 1. Get raw chunks
-                    raw_history = rag.query(f"What is the medical history of {selected_patient}?")
+                    # Use a broader query to ensure we catch the document
+                    raw_history = rag.query(f"Medical history and conditions of {selected_patient}")
                     
                     # 2. Format with LLM
                     if isinstance(raw_history, list) and raw_history:
-                        context = "\n---\n".join(raw_history)
-                        prompt = f"""
-                        You are a medical assistant. Analyze the following patient history snippets and extract key events into a structured Markdown table.
+                        # Filter to ensure patient name is in the content (Double Check)
+                        filtered_history = [doc for doc in raw_history if selected_patient.lower() in doc.lower()]
                         
-                        Columns: Date, Category (e.g., Diagnosis, Vitals, Procedure), Details.
-                        
-                        Snippets:
-                        {context}
-                        """
-                        try:
-                            response = formatter_llm.invoke(prompt)
-                            formatted_history = response.content
+                        if filtered_history:
+                            context = "\n---\n".join(filtered_history)
+                            prompt = f"""
+                            You are a medical assistant. Analyze the following patient history snippets and extract key events into a structured Markdown table.
                             
-                            st.success("History Retrieved")
-                            st.markdown(formatted_history)
-                            with st.expander("View Raw Source"):
-                                st.write(raw_history)
-                        except Exception as e:
-                            st.error(f"Error formatting history: {e}")
-                            st.write(raw_history)
+                            Columns: Date, Category (e.g., Diagnosis, Vitals, Procedure), Details.
+                            
+                            Snippets:
+                            {context}
+                            """
+                            try:
+                                response = formatter_llm.invoke(prompt)
+                                formatted_history = response.content
+                                
+                                st.success("History Retrieved")
+                                st.markdown(formatted_history)
+                                with st.expander("View Raw Source"):
+                                    st.write(filtered_history)
+                            except Exception as e:
+                                st.error(f"Error formatting history: {e}")
+                                st.write(filtered_history)
+                        else:
+                             st.warning(f"No history found for {selected_patient} (Name mismatch in documents).")
+                             st.write(raw_history)
                     else:
                         st.warning("No history found or error occurred.")
                         st.write(raw_history)
