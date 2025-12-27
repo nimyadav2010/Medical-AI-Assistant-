@@ -42,8 +42,14 @@ if not os.path.exists("./chroma_db/chroma.sqlite3"):
                 rag.ingest_pdf(pdf_path)
             st.success(f"Ingested {len(pdf_files)} documents into Knowledge Base.")
 
-# Initialize Helper LLM for Formatting (Bypass SSL)
-formatter_llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0, http_client=httpx.Client(verify=False))
+# Initialize Helper LLM for Formatting
+# On Windows (Local), we disable SSL verify. On Linux (Cloud), we use default.
+if os.name == 'nt':
+    _http_client = httpx.Client(verify=False)
+else:
+    _http_client = None
+
+formatter_llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0, http_client=_http_client)
 
 # --- Sidebar: Manage Data ---
 with st.sidebar.expander("⚙️ Manage Patients"):

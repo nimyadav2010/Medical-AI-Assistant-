@@ -30,8 +30,14 @@ class AgentState(TypedDict):
 
 # LLM
 # Using gpt-3.5-turbo as it is more commonly available
-# Disable SSL verification for OpenAI API calls due to network restrictions
-llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0, http_client=httpx.Client(verify=False))
+# Configure HTTP client based on environment
+# On Windows (Local), we disable SSL verify for corporate proxy. On Linux (Cloud), we use default secure settings.
+if os.name == 'nt':
+    _http_client = httpx.Client(verify=False)
+else:
+    _http_client = None
+
+llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0, http_client=_http_client)
 
 # Nodes
 def planner_node(state: AgentState):
