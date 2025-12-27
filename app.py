@@ -353,7 +353,14 @@ elif page == "📋 Patient Dashboard":
         with col1:
             st.markdown("### Demographics")
             if patient_info:
-                st.json(patient_info)
+                st.write(f"**Name:** {patient_info.get('Name')}")
+                st.write(f"**Age:** {patient_info.get('Age')}")
+                st.write(f"**Gender:** {patient_info.get('Gender')}")
+                st.write(f"**Phone:** {patient_info.get('Phone_number', 'N/A')}")
+                if patient_info.get('Email'):
+                    st.write(f"**Email:** {patient_info.get('Email')}")
+                st.write(f"**Address:** {patient_info.get('Address', 'N/A')}")
+                st.write(f"**Summary:** {patient_info.get('Summary')}")
             else:
                 st.warning("No demographic data found.")
                 
