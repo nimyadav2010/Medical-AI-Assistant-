@@ -26,7 +26,7 @@ load_dotenv()
 
 st.set_page_config(page_title="Agentic Healthcare Assistant", layout="wide")
 
-st.title("🏥 Agentic Healthcare Assistant")
+st.title("🏥 Agentic Healthcare Assistant (Live)")
 
 # Initialize Tools
 ehr = EHRAdapter()

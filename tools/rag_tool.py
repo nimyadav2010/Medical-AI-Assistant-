@@ -102,3 +102,24 @@ class RAGTool:
             except Exception as e2:
                 print(f"Error during fallback query: {e2}")
                 return []
+
+    def get_doc_count(self):
+        """Returns the number of documents in the vector store."""
+        try:
+            return self.vectorstore._collection.count()
+        except Exception:
+            return 0
+
+    def clear_db(self):
+        """Clears the vector store."""
+        try:
+            # In ChromaDB, we can reset the collection
+            self.vectorstore.delete_collection()
+            # Re-initialize
+            self.vectorstore = Chroma(
+                persist_directory=self.db_path,
+                embedding_function=self.embeddings
+            )
+        except Exception as e:
+            print(f"Error clearing DB: {e}")
+
