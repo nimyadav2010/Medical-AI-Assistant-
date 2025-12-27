@@ -59,6 +59,7 @@ if doc_count == 0:
                 rag.ingest_pdf(pdf_path)
             st.success(f"Ingested {len(pdf_files)} documents into Knowledge Base.")
             st.rerun()
+            st.rerun()
 
 # Initialize Helper LLM for Formatting
 # On Windows (Local), we disable SSL verify. On Linux (Cloud), we use default.
