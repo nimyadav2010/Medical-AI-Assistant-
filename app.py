@@ -266,7 +266,7 @@ st.markdown("""
 
 # Use horizontal radio buttons at the top to simulate a top menu
 st.markdown("---")
-page = st.radio("Navigate to:", ["🤖 AI Medical Assistant", "📋 Patient Dashboard", "📅 Appointments", "🔬 Query Lab Reports"], horizontal=True)
+page = st.radio("Navigate to:", ["🤖 AI Medical Assistant", "📋 Patient Dashboard", "📅 Book Appointment", "🔬 Query Lab Reports"], horizontal=True)
 st.markdown("---")
 
 # --- Page 1: AI Medical Assistant ---
@@ -409,7 +409,7 @@ elif page == "📋 Patient Dashboard":
                             st.write(f"Result: {raw_history}")
 
 # --- Page 3: Appointments ---
-elif page == "📅 Appointments":
+elif page == "📅 Book Appointment":
     st.subheader("Book an Appointment")
     
     with st.form("appointment_form"):
